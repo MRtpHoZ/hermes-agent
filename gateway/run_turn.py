@@ -1074,7 +1074,11 @@ class GatewayTurnMixin(GatewayTurnPrepareMixin, GatewayTurnHygieneMixin, Gateway
         # Webhooks can't edit messages, so tool progress / log mode are off there.
         is_webhook = source.platform == Platform.WEBHOOK
         tool_progress_enabled = progress_mode not in {"off", "log"} and not is_webhook
-        feishu_progress_card_enabled = source.platform == Platform.FEISHU and not is_webhook
+        feishu_progress_card_enabled = (
+            source.platform == Platform.FEISHU
+            and not is_webhook
+            and not (_tool_progress_explicit and progress_mode == "off")
+        )
         # Live status for text-rendering typing indicators (Slack); independent of tool_progress.
         _live_status_mode = resolve_display_setting(user_config, platform_key, "live_status", "full")
         _live_status_adapter = (
